@@ -1,0 +1,15 @@
+Lỗi 1 — Servlet Mapping sai
+Cấu hình:
+    "/api/*"
+
+- DispatcherServlet chỉ xử lý các URL thuộc /api/*.
+- URL /welcome không được chuyển vào Spring MVC.
+-> Kết quả: HTTP 404.
+
+Lỗi 2 — ComponentScan sai package
+Cấu hình:
+    @ComponentScan("com.demo.service")
+
+- Spring chỉ quét package com.demo.service.
+- Không quét com.demo.controller nên không đăng ký WelcomeController.
+-> Kết quả: không có handler mapping cho /welcome.

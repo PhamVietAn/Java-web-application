@@ -1,20 +1,21 @@
-package ra.edu.ss02.config;
+package ra.edu.ss02.Ex01;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-public class WebInit extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class MyWebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { WebConfig.class };
+        return null;
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] { WebConfig.class };
+        return new Class<?>[]{WebConfig.class};
     }
+
     @Override
     protected String[] getServletMappings() {
-        return new String[] { "/" };
+        return new String[]{"/"};
     }
 }
