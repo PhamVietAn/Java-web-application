@@ -1,0 +1,29 @@
+[ Trình duyệt (Người dùng) ]
+          |
+          | 1. Gửi Request qua URL:
+          |    /bai4/products?category=chay&limit=10
+          v
+[ Controller (bai4) ]
+          |
+          | 2. Bắt dữ liệu đầu vào (Input):
+          |    - @RequestParam: category (Kiểu String, giá trị: "chay")
+          |    - @RequestParam: limit    (Kiểu int, giá trị: 10)
+          |
+          | 3. Đẩy dữ liệu vào ModelMap (Mapping Keys):
+          |    - Key: "category" ---> Value: category ("chay")
+          |    - Key: "limit"    ---> Value: limit (10)
+          |    - Key: "message"  ---> Value: "Tìm kiếm thành công"
+          |
+          | 4. Điều hướng (Return):
+          |    return "productList";
+          v
+[ View (JSP) ]
+          |
+          | 5. Trỏ tới file: /WEB-INF/views/productList.jsp
+          |
+          | 6. Đổ dữ liệu ra HTML (Output):
+          |    - In danh mục: ${category}
+          |    - In giới hạn: ${limit}
+          |    - In thông báo: ${message}
+          v
+[ Hiển thị giao diện hoàn chỉnh cho người dùng ]

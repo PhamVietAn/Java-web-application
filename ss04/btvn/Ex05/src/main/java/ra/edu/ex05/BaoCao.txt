@@ -1,0 +1,45 @@
+[Trình duyệt / Postman ]
+          | (1. Gửi Request GET/POST/DELETE)
+          v
+[OrderController ]  <-- (Bắt lỗi ID sai kiểu chữ/số ở đây)
+          | (2. Gọi hàm tương ứng)
+          v
+[OrderService ]     <-- (Xử lý nghiệp vụ logic)
+          | (3. Ra lệnh thao tác dữ liệu)
+          v
+[OrderRepository ]  <-- (Tương tác giả lập với Database)
+
+BÁO CÁO PHÂN TÍCH: BẪY ÉP KIỂU VÀ TÍNH IDEMPOTENT
+
+1. Bẫy dữ liệu ép kiểu (Type Mismatch)
+- Khái niệm: Xảy ra khi Client (trình duyệt) gửi lên một dữ liệu không khớp
+với kiểu dữ liệu mà Server (Java) đang chờ đợi.
+
+- Nguyên nhân thực tế: Ví dụ, đường dẫn yêu cầu ID đơn hàng phải là số nguyên
+(Long id), nhưng người dùng lại gõ nhầm chữ cái (ví dụ: /orders/abc).
+
+- Hậu quả: Java không thể ép kiểu chuỗi "abc" sang số, dẫn đến văng lỗi
+NumberFormatException hoặc TypeMismatchException. Nếu không xử lý, lỗi này
+sẽ làm sập luồng xử lý (crash) và hiển thị trang lỗi xấu xí (500/400)
+cho người dùng.
+
+- Cách khắc phục: Chủ động bắt lỗi (bằng khối try-catch hoặc @ExceptionHandler)
+để hệ thống vẫn sống khỏe và chỉ trả về một thông báo lỗi thân thiện
+(VD: "ID đơn hàng phải là một số").
+
+
+2. Tính Idempotent (Sự an toàn khi lặp lại)
+- Khái niệm: Một thao tác được gọi là có tính Idempotent nếu việc bạn thực
+hiện nó 1 lần hay 100 lần liên tiếp thì trạng thái cuối cùng của hệ thống
+(Database) vẫn giống hệt nhau, không bị thay đổi sai lệch.
+
+- Áp dụng giải thích sự cố lag mạng:
++ Thao tác Hủy đơn (Dùng method DELETE): CÓ tính Idempotent. Dù nhân viên
+bấm nút Hủy 3 lần liên tiếp, ở lần gọi đầu tiên đơn hàng đã bị xóa. Lần thứ 2
+và 3, hệ thống tìm không thấy đơn đó nữa nên sẽ bỏ qua (không làm thay đổi
+thêm dữ liệu nào). -> Rất an toàn.
+
++ Thao tác Tạo đơn (Dùng method POST): KHÔNG có tính Idempotent. Mỗi một
+Request POST gửi lên đều được Server coi là một lệnh tạo mới hoàn toàn độc lập.
+Nếu nhân viên bấm Lưu 3 lần liên tiếp, CSDL sẽ insert thêm 3 bản ghi mới.
+-> Rủi ro sinh ra dữ liệu rác, trùng lặp.
