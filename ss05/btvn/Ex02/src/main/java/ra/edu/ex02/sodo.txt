@@ -1,0 +1,13 @@
+[Browser]
+    ↓ request (/bai2/dishes)
+[Controller]
+    ↓ gọi
+[Service]
+    ↓ trả về
+List<Dish>
+    ↓ add vào Model
+[Model: dishes]
+    ↓
+[Thymeleaf View: dish-list.html]
+    ↓ render HTML
+[Browser hiển thị]

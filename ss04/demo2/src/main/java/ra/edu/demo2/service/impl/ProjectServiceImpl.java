@@ -8,8 +8,8 @@ import ra.edu.demo2.service.ProjectService;
 import java.util.List;
 
 @Service
-public class ProjectServiceImpl  implements ProjectService {
-    private ProjectRepository projectRepository;
+public class ProjectServiceImpl implements ProjectService {
+    private final ProjectRepository projectRepository;
 
     public ProjectServiceImpl(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
@@ -23,10 +23,5 @@ public class ProjectServiceImpl  implements ProjectService {
     @Override
     public Project getProjectById(int id) {
         return projectRepository.findById(id);
-    }
-
-    @Override
-    public Project getProjectByName(String prjName) {
-        return projectRepository.findByName(prjName);
     }
 }

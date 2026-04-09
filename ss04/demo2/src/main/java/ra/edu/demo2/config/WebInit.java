@@ -1,21 +1,20 @@
 package ra.edu.demo2.config;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class WebInit extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
-    protected Class<?> @Nullable [] getServletConfigClasses() {
-        return new Class[] {WebConfig.class};
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class[]{WebConfig.class};
     }
 
     @Override
-    protected Class<?> @Nullable [] getRootConfigClasses() {
-        return new Class[] {WebConfig.class};
+    protected Class<?>[] getRootConfigClasses() {
+        return null;
     }
 
     @Override
     protected String[] getServletMappings() {
-        return new String[0];
+        return new String[]{"/"};
     }
 }

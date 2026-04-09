@@ -7,5 +7,4 @@ import java.util.List;
 public interface ProjectRepository {
     List<Project> findAll();
     Project findById(int prjId);
-    Project findByName(String prjName);
 }

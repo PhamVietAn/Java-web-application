@@ -7,5 +7,4 @@ import java.util.List;
 public interface ProjectService {
     List<Project> getProjects();
     Project getProjectById(int id);
-    Project getProjectByName(String prjName);
 }

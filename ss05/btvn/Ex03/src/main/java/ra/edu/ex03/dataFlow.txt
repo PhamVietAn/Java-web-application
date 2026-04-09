@@ -1,0 +1,20 @@
+[View A: dish-list.html]
+    ↓ click "Chỉnh sửa"
+GET /bai3/edit/{id}
+    ↓
+[Controller]
+    ↓ nhận id
+    ↓ gọi Service tìm Dish theo id
+        ├── Nếu tồn tại:
+        │       ↓
+        │   add vào Model ("dish")
+        │       ↓
+        │   return edit-dish.html
+        │       ↓
+        │   Form tự động fill dữ liệu (Data Binding)
+        │
+        └── Nếu KHÔNG tồn tại:
+                ↓
+            redirect:/bai2/dishes
+                ↓
+            kèm message lỗi
