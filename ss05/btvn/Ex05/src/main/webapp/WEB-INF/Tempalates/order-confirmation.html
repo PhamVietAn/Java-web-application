@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/layout/main-layout}"
+      lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Nhận Đơn Hàng</title>
+    <style>
+        .success-box {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .section h2 {
+            margin: 0 0 15px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .price-summary {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .price-row.total {
+            border-top: 2px solid #333;
+            padding-top: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            color: red;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .actions button,
+        .actions a {
+            padding: 10px 20px;
+            border: 1px solid #333;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .actions a:hover,
+        .actions button:hover {
+            background-color: #555;
+        }
+
+        .alert {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Xác Nhận Đơn Hàng</h1>
+
+    <div class="success-box">
+        <h2>Đặt Hàng Thành Công!</h2>
+        <p>Đơn hàng của bạn đã được nhận. Chúng tôi sẽ liên hệ với bạn sớm nhất.</p>
+    </div>
+
+    <div th:if="${successMessage}" class="alert" th:text="${successMessage}"></div>
+
+    <div class="section">
+        <h2>Chi Tiết Đơn Hàng</h2>
+        <div class="info-row">
+            <span>Mã đơn:</span>
+            <span th:text="'#' + ${order.id}">ID</span>
+        </div>
+        <div class="info-row">
+            <span>Trạng thái:</span>
+            <span th:text="${order.status}">Trạng thái</span>
+        </div>
+        <div class="info-row">
+            <span>Ngày tạo:</span>
+            <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Thông Tin Khách Hàng</h2>
+        <div class="info-row">
+            <span>Họ và tên:</span>
+            <span th:text="${order.customerName}">Name</span>
+        </div>
+        <div class="info-row">
+            <span>Số điện thoại:</span>
+            <span th:text="${order.customerPhone}">Phone</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Danh Sách Món</h2>
+        <div th:if="${order.items != null and !#lists.isEmpty(order.items)}">
+            <div th:each="item : ${order.items}" class="item-row">
+                <span th:text="${item.dishName} + ' (' + ${item.quantity} + ' x ' + (#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT')) + ' VNĐ)'">
+                    Món ăn
+                </span>
+                <span th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                    Thành tiền
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="price-summary">
+        <div class="price-row">
+            <span>Tổng tiền:</span>
+            <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Tổng tiền</span>
+        </div>
+        <div class="price-row">
+            <span>Thuế (10%):</span>
+            <span th:text="${#numbers.formatDecimal(order.taxAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Thuế</span>
+        </div>
+        <div class="price-row">
+            <span>Phí giao:</span>
+            <span th:text="${orderService.getFormattedDeliveryFee()}">Phí giao</span>
+        </div>
+        <div class="price-row total">
+            <span>TỔNG CỘNG:</span>
+            <span th:text="${#numbers.formatDecimal(order.finalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Tổng cộng</span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="/bai5/quick-order">Đặt Thêm Hàng</a>
+        <form method="post" th:action="@{|/bai5/order/${order.id}/cancel|}" style="display: inline;">
+            <button type="submit" onclick="return confirm('Hủy đơn hàng?')">Hủy Đơn</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

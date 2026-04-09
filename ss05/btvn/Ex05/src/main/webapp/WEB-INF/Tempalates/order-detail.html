@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/layout/main-layout}"
+      lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Đơn Hàng</title>
+    <style>
+        h1, h2 {
+            margin: 20px 0 15px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .price-summary {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            max-width: 400px;
+            margin-left: auto;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .price-row.total {
+            border-top: 2px solid #333;
+            padding-top: 10px;
+            font-weight: bold;
+            color: red;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .actions button,
+        .actions a {
+            padding: 10px 20px;
+            border: 1px solid #333;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .actions button:hover,
+        .actions a:hover {
+            background-color: #555;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+        }
+
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Chi Tiết Đơn Hàng</h1>
+
+    <div class="section">
+        <h2>Thông Tin Đơn</h2>
+        <div class="info-row">
+            <span>Mã đơn:</span>
+            <span th:text="'#' + ${order.id}">ID</span>
+        </div>
+        <div class="info-row">
+            <span>Trạng thái:</span>
+            <span class="status" th:text="${order.status}">Status</span>
+        </div>
+        <div class="info-row">
+            <span>Ngày tạo:</span>
+            <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+        </div>
+        <div class="info-row">
+            <span>Cập nhật lần cuối:</span>
+            <span th:text="${#temporals.format(order.updatedAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Thông Tin Khách Hàng</h2>
+        <div class="info-row">
+            <span>Họ và tên:</span>
+            <span th:text="${order.customerName}">Name</span>
+        </div>
+        <div class="info-row">
+            <span>Số điện thoại:</span>
+            <span th:text="${order.customerPhone}">Phone</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Danh Sách Món Ăn</h2>
+        <div th:if="${order.items != null and !#lists.isEmpty(order.items)}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Tên Món</th>
+                    <th style="text-align: center;">Số Lượng</th>
+                    <th style="text-align: right;">Giá Đơn Vị</th>
+                    <th style="text-align: right;">Thành Tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${order.items}">
+                    <td th:text="${item.dishName}">Tên món</td>
+                    <td style="text-align: center;" th:text="${item.quantity}">Số lượng</td>
+                    <td style="text-align: right;" th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá</td>
+                    <td style="text-align: right;" th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Thành tiền</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="price-summary">
+        <div class="price-row">
+            <span>Tổng tiền:</span>
+            <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Tổng tiền</span>
+        </div>
+        <div class="price-row">
+            <span>Thuế (10%):</span>
+            <span th:text="${#numbers.formatDecimal(order.taxAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Thuế</span>
+        </div>
+        <div class="price-row">
+            <span>Phí giao:</span>
+            <span>25.000 VNĐ</span>
+        </div>
+        <div class="price-row total">
+            <span>TỔNG CỘNG:</span>
+            <span th:text="${#numbers.formatDecimal(order.finalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Tổng cộng</span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="/bai5/quick-order">Đặt Thêm Hàng</a>
+        <div th:if="${order.status == 'PENDING' or order.status == 'CONFIRMED'}">
+            <form method="post" th:action="@{|/bai5/order/${order.id}/cancel|}" style="display: inline;">
+                <button type="submit" onclick="return confirm('Hủy đơn hàng?')">Hủy Đơn</button>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

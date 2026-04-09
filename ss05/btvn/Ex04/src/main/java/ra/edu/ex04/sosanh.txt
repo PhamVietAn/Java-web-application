@@ -1,0 +1,25 @@
+| Tiêu chí               | (A) Copy-Paste Header/Footer | (B) Layout Dialect (`layout:decorate`) |
+| ---------------------- | ---------------------------- | -------------------------------------- |
+| **Tái sử dụng**        |  Không                      |  Cao                                  |
+| **Bảo trì**            |  Sửa nhiều file             |  Sửa 1 nơi                            |
+| **Độ DRY**             |  Vi phạm DRY                |  Chuẩn DRY                            |
+| **Độ phức tạp**        |  Đơn giản                   |  Cần cấu hình thêm                    |
+| **Mở rộng**            |  Khó                        |  Dễ scale                             |
+| **Tính chuyên nghiệp** |  Thấp                       |  Cao                                  |
+
+Kết luận:
+
+- Dự án nhỏ → có thể dùng A
+- Dự án thực tế → B là bắt buộc
+
+Phân tích kỹ thuật:
+Nếu KHÔNG add Dialect:
+- layout:decorate →  bị ignore
+- Trang con →  không kế thừa layout
+- HTML render →  sai cấu trúc
+
+Khi đã add:
+Thymeleaf engine:
+ - Parse layout
+ - Inject fragment
+ - Merge layout + content

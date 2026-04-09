@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/layout/main-layout}"
+      lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Món Ăn</title>
+    <style>
+        h1 {
+            margin: 20px 0 15px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .detail-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            max-width: 650px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .status.available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.unavailable {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions a {
+            padding: 10px 20px;
+            border: 1px solid #333;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+        }
+
+        .actions a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Chi Tiết Món Ăn</h1>
+
+    <div class="detail-box">
+        <div class="info-row">
+            <span>ID:</span>
+            <strong th:text="${dish.id}">1</strong>
+        </div>
+        <div class="info-row">
+            <span>Tên món:</span>
+            <strong th:text="${dish.name}">Phở bò</strong>
+        </div>
+        <div class="info-row">
+            <span>Giá:</span>
+            <strong style="color: red;" th:text="${dish.price}">50000</strong>
+        </div>
+        <div class="info-row">
+            <span>Trạng thái:</span>
+            <span class="status"
+                  th:classappend="${dish.available} ? 'available' : 'unavailable'"
+                  th:text="${dish.available} ? 'Còn phục vụ' : 'Tạm hết'">
+                Còn phục vụ
+            </span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="/bai5/dishes">Quay lại danh sách món</a>
+        <a th:href="@{|/bai5/edit/${dish.id}|}">Chỉnh sửa món</a>
+    </div>
+</section>
+</body>
+</html>

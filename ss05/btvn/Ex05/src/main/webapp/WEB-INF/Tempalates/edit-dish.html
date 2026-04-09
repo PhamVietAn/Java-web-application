@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/layout/main-layout}"
+      lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Món Ăn</title>
+    <style>
+        h1 {
+            margin: 20px 0 15px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .form-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input {
+            width: auto;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .form-actions button,
+        .form-actions a {
+            padding: 10px 20px;
+            border: 1px solid #333;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-actions a {
+            display: inline-block;
+        }
+
+        .form-actions button:hover,
+        .form-actions a:hover {
+            background-color: #555;
+        }
+
+        .form-actions a.btn-cancel {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        .form-actions a.btn-cancel:hover {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Chỉnh Sửa Món Ăn</h1>
+
+    <form th:action="@{|/bai5/edit/${dish.id}|}" th:object="${dish}" method="post" class="form-section">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-group">
+            <label for="name">Tên Món Ăn:</label>
+            <input id="name" type="text" th:field="*{name}" required maxlength="100">
+        </div>
+
+        <div class="form-group">
+            <label for="price">Giá (VNĐ):</label>
+            <input id="price" type="number" th:field="*{price}" min="0" step="1000" required>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <input id="available" type="checkbox" th:field="*{available}">
+            <label for="available">Còn phục vụ</label>
+        </div>
+
+        <div class="form-actions">
+            <a href="/bai5/dishes" class="btn-cancel">Hủy</a>
+            <button type="submit">Lưu</button>
+        </div>
+    </form>
+</section>
+
+</body>
+</html>

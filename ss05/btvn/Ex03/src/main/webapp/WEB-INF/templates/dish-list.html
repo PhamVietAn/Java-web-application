@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h2>Danh sách món ăn</h2>
+
+<!-- Bẫy dữ liệu -->
+<div th:if="${dishes == null or #lists.isEmpty(dishes)}">
+    <p>Hiện tại nhà hàng đang cập nhật thực đơn, vui lòng quay lại sau</p>
+</div>
+
+<!-- Hiển thị bảng -->
+<table border="1" th:unless="${dishes == null or #lists.isEmpty(dishes)}">
+    <tr>
+        <th>ID</th>
+        <th>Tên món</th>
+        <th>Giá</th>
+        <th>Trạng thái</th>
+    </tr>
+
+    <tr th:each="dish : ${dishes}">
+        <td th:text="${dish.id}"></td>
+        <td th:text="${dish.name}"></td>
+        <td th:text="${dish.price}"></td>
+
+        <!-- Xử lý trạng thái -->
+        <td>
+            <span th:if="${dish.available}" style="color: green;">
+                Còn hàng
+            </span>
+
+            <span th:unless="${dish.available}" class="out-of-stock">
+                Hết hàng
+            </span>
+        </td>
+        <td>
+            <a th:href="@{|/bai3/edit/${dish.id}|}">
+                Chỉnh sửa
+            </a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

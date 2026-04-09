@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/layout/main-layout}"
+      lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Món Nhanh</title>
+    <style>
+        h1, h2 {
+            margin: 20px 0 15px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .form-section {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            padding: 15px;
+        }
+
+        .form-group {
+            margin: 10px 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .dishes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .dish-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .dish-card.unavailable {
+            opacity: 0.5;
+        }
+
+        .dish-name {
+            font-weight: bold;
+            font-size: 15px;
+            margin: 0 0 10px 0;
+        }
+
+        .dish-price {
+            font-size: 16px;
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .dish-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            margin: 8px 0;
+        }
+
+        .dish-status.available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .dish-status.unavailable {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .quantity-control {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .quantity-control input {
+            width: 60px;
+            padding: 6px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .quantity-control button {
+            padding: 6px 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .price-summary {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f9f9f9;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .price-row.total {
+            border-top: 2px solid #333;
+            border-bottom: none;
+            padding-top: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            color: red;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .form-actions button,
+        .form-actions a {
+            padding: 10px 20px;
+            border: 1px solid #333;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .form-actions .btn-reset {
+            background-color: white;
+            color: #333;
+        }
+
+        .alert {
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .dishes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions button,
+            .form-actions a {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Đặt Món Nhanh</h1>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    <div th:if="${successMessage}" class="alert alert-success" style="background-color: #d4edda; border-color: #c3e6cb; color: #155724;" th:text="${successMessage}"></div>
+
+    <form method="post" action="/bai5/quick-order" id="orderForm">
+        <div class="form-section">
+            <h2>Thông Tin Khách Hàng</h2>
+
+            <div class="form-group">
+                <label for="customerName">Họ và tên:</label>
+                <input type="text" id="customerName" name="customerName" value="Khách hàng demo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="customerPhone">Số điện thoại:</label>
+                <input type="tel" id="customerPhone" name="customerPhone" value="0901234567" required>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Chọn Món Ăn</h2>
+
+            <div th:if="${dishes != null and !#lists.isEmpty(dishes)}">
+                <div class="dishes-grid">
+                    <!-- Mock data card - visible when designer opens file directly -->
+                    <div class="dish-card">
+                        <div class="dish-name">Phở bò</div>
+                        <div class="dish-price">50.000 VNĐ</div>
+                        <div class="dish-status available">Còn phục vụ</div>
+                        <div class="quantity-control">
+                            <input type="number" min="1" value="1" placeholder="1">
+                            <button type="button" disabled>Thêm</button>
+                        </div>
+                    </div>
+
+                    <!-- Real data from server - replaces mock data via Thymeleaf -->
+                    <div th:each="dish : ${dishes}" class="dish-card"
+                         th:classappend="${!dish.available} ? 'unavailable'">
+                        <div class="dish-name" th:text="${dish.name}">Tên món</div>
+                        <div class="dish-price" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                            Giá
+                        </div>
+                        <div class="dish-status"
+                             th:classappend="${dish.available} ? 'available' : 'unavailable'"
+                             th:text="${dish.available} ? 'Còn phục vụ' : 'Tạm hết'">
+                            Trạng thái
+                        </div>
+                        <div class="quantity-control" th:if="${dish.available}">
+                            <input type="number" min="1" value="1" class="dish-quantity"
+                                   th:data-dish-id="${dish.id}"
+                                   th:data-dish-name="${dish.name}"
+                                   placeholder="1">
+                            <button type="button" class="btn-add-to-order"
+                                    th:data-dish-id="${dish.id}">
+                                Thêm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${dishes == null or #lists.isEmpty(dishes)}" class="empty-message">
+                <p>Không có dữ liệu</p>
+            </div>
+
+            <!-- Hidden fields for selected dishes - populated on form submission -->
+            <div id="selectedItems" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h2>Tóm Tắt Đơn Hàng</h2>
+            <div class="price-summary">
+                <p style="text-align: center; color: #999;">
+                    Chọn các món ở trên rồi nhấn "Đặt Hàng" để xem tóm tắt
+                </p>
+                <p style="text-align: center; font-size: 12px; color: #999;">
+                    (Toàn bộ tính toán giá cả sẽ được xử lý phía Server)
+                </p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-actions">
+                <button type="reset" class="btn-reset">Xóa</button>
+                <button type="submit" style="background-color: #007bff; color: white; padding: 10px 20px; border: none;">Đặt Hàng</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        /**
+         * Dumb View Implementation - NO business logic here
+         * All calculations (subtotal, tax, delivery fee, final price) are handled SERVER-SIDE
+         * This script only manages UI state for dish selection
+         */
+        let selectedDishes = new Map(); // {dishId: {name, price, quantity}}
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attach event listeners to "Add to Order" buttons
+            document.querySelectorAll('.btn-add-to-order').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    addDishToSelection(this);
+                });
+            });
+
+            // Handle form submission - collect selected dishes into hidden fields
+            document.getElementById('orderForm').addEventListener('submit', function(e) {
+                if (selectedDishes.size === 0) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn ít nhất một món ăn');
+                    return false;
+                }
+                populateFormFields();
+            });
+        });
+
+        /**
+         * Add dish to selection when user clicks "Thêm" button
+         * No calculations here - just UI state management
+         */
+        function addDishToSelection(button) {
+            const dishId = button.getAttribute('data-dish-id');
+            const quantityInput = document.querySelector(
+                'input.dish-quantity[data-dish-id="' + dishId + '"]'
+            );
+            const quantity = parseInt(quantityInput.value) || 1;
+
+            if (quantity <= 0) {
+                alert('Số lượng phải lớn hơn 0');
+                return;
+            }
+
+            const dishName = quantityInput.getAttribute('data-dish-name');
+
+            // Store in selectedDishes map (NO price calculation here!)
+            selectedDishes.set(dishId, {
+                name: dishName,
+                quantity: quantity
+            });
+
+            // Reset input for next selection
+            quantityInput.value = 1;
+
+            alert('Thêm ' + dishName + ' (' + quantity + ') vào đơn hàng');
+        }
+
+        /**
+         * Populate hidden form fields for submission
+         * The server will handle all price calculations
+         */
+        function populateFormFields() {
+            const container = document.getElementById('selectedItems');
+            container.innerHTML = '';
+
+            selectedDishes.forEach((dish, dishId) => {
+                // Create hidden input for dishIds[]
+                const dishInput = document.createElement('input');
+                dishInput.type = 'hidden';
+                dishInput.name = 'dishIds';
+                dishInput.value = dishId;
+                container.appendChild(dishInput);
+
+                // Create hidden input for quantities[]
+                const quantityInput = document.createElement('input');
+                quantityInput.type = 'hidden';
+                quantityInput.name = 'quantities';
+                quantityInput.value = dish.quantity;
+                container.appendChild(quantityInput);
+            });
+        }
+    </script>
+</section>
+</body>
+</html>
