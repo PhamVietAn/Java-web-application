@@ -1,14 +1,35 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{book-main-layout :: head(${pageTitle})}"></head>
 <body>
-    <div layout:fragment="content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-danger font-weight-bold mb-0">Danh Mục Khóa Học</h2>
-        </div>
-    </div>
+<nav th:replace="~{book-main-layout :: header(${pageTitle})}"></nav>
+
+<main class="container my-4">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+        <tr>
+            <th>Mã sách</th>
+            <th>Tên sách</th>
+            <th>Tác giả</th>
+            <th>Giá bán</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}" th:classappend="${book.price >= 300000} ? 'highlight-book' : ''">
+            <td th:text="${book.id}">1</td>
+            <td th:text="${book.title}">Tên sách</td>
+            <td th:text="${book.author}">Tác giả</td>
+            <td th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá</td>
+            <td>
+                <a class="btn btn-sm btn-primary" th:href="@{/books/{id}(id=${book.id})}">Xem chi tiết</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer th:replace="~{book-main-layout :: footer}"></footer>
+<th:block th:replace="~{book-main-layout :: scripts}"></th:block>
 </body>
 </html>

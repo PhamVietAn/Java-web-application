@@ -1,10 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{book-main-layout :: head(${pageTitle})}"></head>
 <body>
+<nav th:replace="~{book-main-layout :: header(${pageTitle})}"></nav>
 
+<main class="container my-4">
+    <div th:if="${book != null}">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <th>Mã sách</th>
+                <th>Tên sách</th>
+                <th>Tác giả</th>
+                <th>Giá bán</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${book.id}">1</td>
+                <td th:text="${book.title}">Tên sách</td>
+                <td th:text="${book.author}">Tác giả</td>
+                <td th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="alert alert-warning" th:if="${book == null}">
+        Không tìm thấy sách với mã được yêu cầu.
+    </div>
+
+    <a class="btn btn-secondary" th:href="@{/books}">Quay lại danh sách</a>
+</main>
+
+<footer th:replace="~{book-main-layout :: footer}"></footer>
+<th:block th:replace="~{book-main-layout :: scripts}"></th:block>
 </body>
 </html>
