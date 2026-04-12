@@ -1,11 +1,12 @@
+
 | Tiêu chí               | (A) Copy-Paste Header/Footer | (B) Layout Dialect (`layout:decorate`) |
 | ---------------------- | ---------------------------- | -------------------------------------- |
-| **Tái sử dụng**        |  Không                      |  Cao                                  |
-| **Bảo trì**            |  Sửa nhiều file             |  Sửa 1 nơi                            |
-| **Độ DRY**             |  Vi phạm DRY                |  Chuẩn DRY                            |
-| **Độ phức tạp**        |  Đơn giản                   |  Cần cấu hình thêm                    |
-| **Mở rộng**            |  Khó                        |  Dễ scale                             |
-| **Tính chuyên nghiệp** |  Thấp                       |  Cao                                  |
+| **Tái sử dụng**        |  Không                       |  Cao                                  |
+| **Bảo trì**            |  Sửa nhiều file              |  Sửa 1 nơi                            |
+| **Độ DRY**             |  Vi phạm DRY                 |  Chuẩn DRY                            |
+| **Độ phức tạp**        |  Đơn giản                    |  Cần cấu hình thêm                    |
+| **Mở rộng**            |  Khó                         |  Dễ scale                             |
+| **Tính chuyên nghiệp** |  Thấp                        |  Cao                                  |
 
 Kết luận:
 
